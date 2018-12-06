@@ -1,11 +1,15 @@
-import keras
-from keras.models import Model
+import os
+from keras.models import Model, load_model
 from keras.layers import Input, Dense, Conv1D, BatchNormalization, \
                              Activation, Dropout, GRU, TimeDistributed
 from keras.optimizers import Adam
 
 
-def model(input_shape):
+TRAINED_WEIGHT = os.path.join(os.path.dirname(os.path.realpath(__file__)), "tr_model.h5")
+Tx = 5511 # The number of time steps input to the model from the spectrogram
+n_freq = 101 # Number of frequencies input to the model at each time step of the spectrogram
+
+def create_model(input_shape):
     """
     Function creating the model's graph in Keras.
     
@@ -37,12 +41,12 @@ def model(input_shape):
     
     # Step 4: Time-distributed dense layer
     X = TimeDistributed(Dense(1, activation = "sigmoid"))(X) # time distributed  (sigmoid)
-    model = Model(inputs = X_input, outputs = X)    
+    model = Model(inputs = X_input, outputs = X)
+    opt = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, decay=0.01)
+    model.compile(loss='binary_crossentropy', optimizer=opt, metrics=["accuracy"])
     return model  
 
-Tx = 5511 # The number of time steps input to the model from the spectrogram
-n_freq = 101 # Number of frequencies input to the model at each time step of the spectrogram
+def process_model():
+    model = load_model(TRAINED_WEIGHT)
 
-model = model(input_shape = (Tx, n_freq))
-opt = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, decay=0.01)
-model.compile(loss='binary_crossentropy', optimizer=opt, metrics=["accuracy"])
+    return model
