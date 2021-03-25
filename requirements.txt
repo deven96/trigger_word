@@ -14,7 +14,7 @@ Pillow==6.2.0
 protobuf==3.6.1
 python-dateutil==2.7.5
 pytz==2018.7
-PyYAML==3.13
+PyYAML==5.4
 scipy==1.1.0
 six==1.11.0
 tensorboard==1.12.0
